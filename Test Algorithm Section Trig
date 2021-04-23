@@ -1,0 +1,24 @@
+Math program algorithm 
+
+1. create TriangleSidesScanned class
+
+   scan for all 3 triangle sides where side C is the hyponuese
+
+   Store scanned values into variables
+
+2. create AnglesScanned class
+
+   nest in a WHILE angles =< 90 degree loop
+
+   scan for all 3 angles 
+
+   IF any AngleScanned >= 90 degrees, restart the scanning loop 
+
+3. Calculate unknown side
+
+   use a^2 + b^2 = c^2 
+ 
+   IF input a and b are true 
+   Calc for C
+   
+   .... to be finished
