@@ -12,7 +12,7 @@ public class Main {
 				numIn, start_base, numOut, end_base);
 		
 //		System.out.println("1237 oct in dec is: " + NumConverter.BaseToDec("1237", 2));
-		System.out.println("16 dec in binary is: " + NumConverter.decToBase(16, 2));
+//		System.out.println("16 dec in binary is: " + NumConverter.decToBase(16, 2));
 		
 //		System.out.println( "a is: " + NumConverter.ConvAlphaToNum('a'));
 //		System.out.println( "A is: " + NumConverter.ConvAlphaToNum('A'));

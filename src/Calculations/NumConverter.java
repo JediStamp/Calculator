@@ -10,7 +10,7 @@ public class NumConverter {
 	 * @return - Returns the decimal value, or -1 if the input contains 
 	 * a character other than alphanumeric
 	 */
-	public static int baseToDec( String numIn, int start_base ) {
+	private static int baseToDec( String numIn, int start_base ) {
 		int numOut = 0;
 		int valInt = 0;
 		String valStr;
@@ -49,7 +49,7 @@ public class NumConverter {
 	 * @param base - any whole number
 	 * @return - String number in new base
 	 */
-	public static String decToBase( int numIn, int end_base ) {
+	private static String decToBase( int numIn, int end_base ) {
 		String numOut = "";
 		int rem = 0;
 		// figure out how many loops to do
