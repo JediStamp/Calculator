@@ -2,10 +2,10 @@ package Calculations;
 
 public class Main {
 	public static void main(String[] args) {
-		int start_base = 16;
-		int end_base = 2;
-//		String numIn = "01111000111011110001";
-		String numIn = "78EF1";
+		int start_base = 2;
+		int end_base = 16;
+		String numIn = "10110000.011";
+//		String numIn = "176.375";
 		String numOut = NumConverter.baseToBase(numIn, start_base, end_base);
 		
 		System.out.printf("%s base %d is %s in base %d%n%n", 
