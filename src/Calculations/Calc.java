@@ -1,3 +1,5 @@
+package Calculations;
+
 import java.util.Scanner;
 
 public class Calc {
@@ -17,8 +19,8 @@ public class Calc {
 		
 		float preCalc;
 				
-		System.out.println("Enter 2 sides of the right anlgle triangle and we will use Pythagoris'" +
-				"\n" + "theory to calculate the thrid side, where side C is the hypotenues" +
+		System.out.println("Enter 2 sides of the right angle triangle and we will use Pythagoris'" +
+				"\n" + "theory to calculate the third side, where side C is the hypotenuse" +
 				"\n" + "Enter '0' for the unknown side");
 		
 		//scan for input
