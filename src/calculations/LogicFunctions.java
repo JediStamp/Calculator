@@ -1,4 +1,4 @@
-package Calculations;
+package calculations;
 
 import java.util.ArrayList;
 import java.util.regex.Matcher;
@@ -73,7 +73,10 @@ public class LogicFunctions {
 			System.out.println(innerBrackets(input));
 			// How many terms in the brackets
 			//TODO: How many terms are in the brackets
+			
 			// Evaluate Term
+			// is there a + or O ??
+			
 			//TODO: EVALUATE TERM
 			ArrayList<Boolean> boolList = new ArrayList<Boolean>(8);
 			for( int j =0; j <8; j++) {
@@ -82,6 +85,8 @@ public class LogicFunctions {
 			// Add term to array 
 			test.addTerm(innerBrackets(input),boolList);
 			test.printResults();
+			
+			//Modify input
 		}
 		
 		//Once all brackets are complete 
