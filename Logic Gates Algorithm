@@ -1,0 +1,20 @@
+Input string
+
+1. Count number of separate inputs (A, B, C etc)
+2. Create truth table matrix
+3. Left to Right
+  a. Look for inner bracket
+  b. Evaluate inside bracket 
+    1.  Look for term separators (+ O)
+    2. Evaluate each term left to right
+  c. Replace that part of the string with it's result.
+  d. Repeat
+  
+Order:
+1. Brackets
+2. ! (NOT) - currently to right of term or bracket set
+3. * (AND)
+4. + / O (OR / XOR) - term separators
+
+How do I evaluate and replace terms?
+  Replace term in string with @1, @2 etc to represent the current working truth tables
