@@ -26,7 +26,9 @@ public class Main {
 	}
 	
 	public static void logicFun() {
-		LogicFunctions.inputParse("(A+B)!*C + AOB");
+		String input = "(A+B)!*C + (AOB)";
+		System.out.println("Input: " + input);
+		LogicFunctions.inputParse(input);
 		
 	}
 	

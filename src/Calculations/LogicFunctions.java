@@ -1,5 +1,6 @@
 package Calculations;
 
+import java.util.ArrayList;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -68,9 +69,23 @@ public class LogicFunctions {
 		System.out.println("number of brackets is: " + brackets);
 		
 		for (int i = 0; i < brackets; i++) {
-			//evaluate the part in the brackets
+			// evaluate the part in the brackets
 			System.out.println(innerBrackets(input));
+			// How many terms in the brackets
+			//TODO: How many terms are in the brackets
+			// Evaluate Term
+			//TODO: EVALUATE TERM
+			ArrayList<Boolean> boolList = new ArrayList<Boolean>(8);
+			for( int j =0; j <8; j++) {
+				boolList.add(j,false);
+			}
+			// Add term to array 
+			test.addTerm(innerBrackets(input),boolList);
+			test.printResults();
 		}
+		
+		//Once all brackets are complete 
+		//Check for NOT
 	}
 	
 	private static int countMatches(String input, String term) {

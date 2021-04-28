@@ -1,55 +1,79 @@
 package Calculations;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class LogicArray {
-	private Character[] names; //A,B, C, .. O for out
-	private boolean[][] truth; //Row - for each truth table value, Col for each input and for output
-	public LogicArray(int size) {
-		// Define the names for variables and outputs
-		names = new Character[size + 1];
-		for (int i = 0; i < size; i++) {
-			names[i] = (char)(i + 65);
+	private ArrayList<String> names = new ArrayList<String>(); //A,B, C, .. O for out
+	//Row 2^n - number of T/F per input
+	// Col n + out (number of inputs + int terms + output -> variable)
+	
+	// inner array is the truth table for a given input or output
+	// outer array is the inputs and outputs
+	private List<List<Boolean>> truth;
+	private int numCols, numRows;
+	
+	
+	public LogicArray(int numCols) {
+		this.numCols = numCols;
+		// Define the names for variables
+		for (int i = 0; i < numCols; i++) {
+			names.add(Character.toString((char)(i + 65)));
 		}
-		//O is out
-		names[size] = 'O';
 		
 		// Fill in the inputs
-		int rowLen = (int) Math.pow(2, size);
-		int colLen = size + 1;
-		truth = new boolean[rowLen][colLen];
-		for (int col = 0; col < colLen -1; col++) {
-			for (int row = 0; row < rowLen; row++) {
-				//calculate size of true & false groups
-				int gpSize = (int) Math.pow(2,  size-col-1);
-				// calculate how many times the true groups repeat
-				int repeats = truth.length / gpSize / 2;
-				//number of groups in this column
-				for ( int i = 0; i < repeats; i ++) {
-					//pattern of 0's and 1's
-					//true only, false is default value
-					for (int t = 0; t < gpSize; t++) {
-						truth[t + i*(gpSize)*2][col] = true;
-					}
+		//numRows is how many lines will be in the truth table
+		//2^n where n is the number of unique inputs
+		numRows = (int) Math.pow(2, numCols);
+		truth = new ArrayList<List<Boolean>>(numCols);
+
+		// For each input
+		for (int col = 0; col < numCols; col++) {
+			ArrayList<Boolean> boolList = new ArrayList<Boolean>(numRows);
+			//calculate size of true & false groups
+			int gpSize = (int) Math.pow(2,  numCols - col - 1);
+			// calculate how many times the groups repeat
+			int repeats = numRows / gpSize / 2;
+			
+			for ( int i = 0; i < repeats; i ++) {
+				//pattern of 0's and 1's
+				// add true
+				for (int t = 0; t < gpSize; t++) {
+					boolList.add(t + i*(gpSize)*2,true);
+				}
+				//add false
+				for (int t = 0; t < gpSize; t++) {
+					boolList.add(false);
 				}
 			}
+			//add truth table for this input
+			truth.add(col, boolList);
 		}
 	}
 	
 	public void printResults() {
-		for (char i:names) {
+		//Print Headers
+		for (String i:names) {
 			System.out.printf("\t%s",i);
 		}
 		
 		System.out.println();
+		System.out.println("-----------------------------");
+
 		// one row at a time
-		for (int row = 0; row < truth.length; row++) {
+		for (int row = 0; row < truth.get(0).size(); row++) {
 			// all column values
 			String msg = "";
-			for (int col = 0; col < truth[0].length; col++) {
-				msg += "\t" + truth[row][col];
+			for (int col = 0; col < truth.size() ; col++) {
+				msg += "\t" + truth.get(col).get(row);
 			}
 			System.out.println(msg);
 		}
-		
 	}
 	
+	public void addTerm(String term, ArrayList<Boolean> newCol) {
+		names.add(term);
+		this.numCols++;
+		truth.add(newCol);
+	}
 }
