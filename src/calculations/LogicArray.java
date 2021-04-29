@@ -13,17 +13,18 @@ public class LogicArray {
 	private List<List<Boolean>> truth;
 	private int numCols, numRows;
 	
-	
-	public LogicArray(int numCols) {
-		this.numCols = numCols;
+/**
+ * Create a Logic array based on how many initial inputs there are.
+ * 
+ * @param names - arrayList of the input names
+ */
+	public LogicArray(ArrayList<String> names) {
 		// Define the names for variables
-		for (int i = 0; i < numCols; i++) {
-			names.add(Character.toString((char)(i + 65)));
-		}
+		this.names = names;
+		this.numCols = names.size();
 		
 		// Fill in the inputs
-		//numRows is how many lines will be in the truth table
-		//2^n where n is the number of unique inputs
+		//numRows is how many lines will be in the truth table (2^numCols)
 		numRows = (int) Math.pow(2, numCols);
 		truth = new ArrayList<List<Boolean>>(numCols);
 
@@ -34,9 +35,8 @@ public class LogicArray {
 			int gpSize = (int) Math.pow(2,  numCols - col - 1);
 			// calculate how many times the groups repeat
 			int repeats = numRows / gpSize / 2;
-			
+			//pattern of 0's and 1's (false and true)
 			for ( int i = 0; i < repeats; i ++) {
-				//pattern of 0's and 1's
 				// add true
 				for (int t = 0; t < gpSize; t++) {
 					boolList.add(t + i*(gpSize)*2,true);
@@ -51,6 +51,9 @@ public class LogicArray {
 		}
 	}
 	
+	/**
+	 * Prints out the matrix with headers
+	 */
 	public void printResults() {
 		//Print Headers
 		for (String i:names) {
@@ -71,12 +74,25 @@ public class LogicArray {
 		}
 	}
 	
+	/**
+	 * Adds a column to the matrix 
+	 * May be an intermediary term or the output
+	 * 
+	 * @param term - the name, shows the operation performed
+	 * @param newCol - an ArrayList of the results of the operation described in the name
+	 */
 	public void addTerm(String term, ArrayList<Boolean> newCol) {
 		names.add(term);
 		this.numCols++;
 		truth.add(newCol);
 	}
 	
+	/**
+	 * Checks if a term is already in the matrix
+	 * 
+	 * @param input - the term to be checked
+	 * @return - true if present / otherwise false
+	 */
 	public boolean checkTerm(String input) {
 		for (int i = 0; i < names.size(); i++) {
 			if (names.get(i).equals(input)) {
@@ -86,6 +102,12 @@ public class LogicArray {
 		return false;
 	}
 	
+	/**
+	 * Gets the index of a column from the name
+	 * 
+	 * @param input - column name
+	 * @return - index of column, -1 if not present.
+	 */
 	public int getIndex(String input) {
 		for (int i = 0; i < names.size(); i++) {
 			if (names.get(i).equals(input)) {
@@ -95,6 +117,11 @@ public class LogicArray {
 		return -1;
 	}
 	
+	/**
+	 * Returns the number of rows in the matrix (the number of true / false values per term
+	 * 
+	 * @return - the number of rows.
+	 */
 	public int getLen() {
 		return this.numRows;
 	}
