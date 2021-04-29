@@ -69,24 +69,43 @@ public class LogicFunctions {
 		System.out.println("number of brackets is: " + brackets);
 		
 		for (int i = 0; i < brackets; i++) {
-			// evaluate the part in the brackets
+			// 2. evaluate the part in the brackets
 			System.out.println(innerBrackets(input));
-			// How many terms in the brackets
-			//TODO: How many terms are in the brackets
+			// 2.a. How many terms in the brackets (is there a + or O?)
+			ArrayList<String> terms = separateTerms(innerBrackets(input));
+			System.out.println(terms);
 			
-			// Evaluate Term
-			// is there a + or O ??
-			
-			//TODO: EVALUATE TERM
-			ArrayList<Boolean> boolList = new ArrayList<Boolean>(8);
-			for( int j =0; j <8; j++) {
-				boolList.add(j,false);
+			// Evaluate Terms //longer than 1
+			// for each term
+			for (int j = 0; j < terms.size(); j++) {
+				
+				// is it already in the truth table?
+				if (test.getIndex(terms.get(j)) >= 0) {
+					//if so, get the column number
+					terms.set(j, "col" + test.getIndex(terms.get(j)));
+				}
+				
+				//if not
+				else {
+					//if it is not a separator, add it
+					if (!isSeparator(terms.get(j))) {
+						System.out.println("Add term to test and evaluate it");
+						ArrayList<Boolean> boolList = evalTerm(terms.get(j),test.getLen());
+						test.addTerm(terms.get(j),boolList);
+						test.printResults();
+					}
+					//if it is a separator, skip it for now
+				}
+					
+				
+			//once all non separator terms are evaluated
+			//combine with separator
+			//evaluate	
+			//move outside of brackets and repeat	
+				
 			}
-			// Add term to array 
-			test.addTerm(innerBrackets(input),boolList);
-			test.printResults();
-			
-			//Modify input
+			//evaluate rest
+
 		}
 		
 		//Once all brackets are complete 
@@ -103,6 +122,7 @@ public class LogicFunctions {
 		return terms;
 	}
 	
+	
 	private static String innerBrackets(String input) {
 		int start = 0;
 		int end = 0;
@@ -117,10 +137,57 @@ public class LogicFunctions {
 			if(input.substring(i, i+1).equals(")")) {
 				end = i;
 //				System.out.println("end: " + end);
-				return input.substring(start,end+1);
+				//Doing this removes the brackets
+				return input.substring(start+1,end);
 			}
 		}
-		
 		return input;
+	}
+	
+	
+	private static ArrayList<String> separateTerms(String input){
+		ArrayList<String> out = new ArrayList<String>();
+		String[] separators = {"+", "O"};
+		String sub = "";
+		int term = 0;
+		for (int i = 0; i < input.length(); i++) {
+			if (input.substring(i, i+1).equals(separators[0]) || 
+				input.substring(i, i+1).equals(separators[1])	) {
+				out.add(term, sub);
+				sub = "";
+				term++;
+				//Add operator as a term
+				out.add(term, input.substring(i, i+1));
+				term++;
+			} else {
+				sub += input.substring(i, i+1);
+			}
+		}
+		out.add(term, sub);
+		return out;
+	}
+	
+	private static boolean isSeparator(String input) {
+		String[] separators = {"+", "O"};
+		for (int i = 0; i < separators.length; i++) {
+			if (input.equals(separators[i])) {
+				return true;
+			}
+		}
+		return false;
+	}
+	
+	private static ArrayList<Boolean> evalTerm(String term, int len){
+		ArrayList<Boolean> boolList = new ArrayList<Boolean>(len);
+		System.out.println("Eval Term returns all false atm");
+		//get letter column
+		// get operator (AND, NOT)
+		// evaluate NOT
+		//AND get next input...
+		
+		for( int j =0; j < len; j++) {
+			boolList.add(j,false);
+		}
+		return boolList;
 	}
 }

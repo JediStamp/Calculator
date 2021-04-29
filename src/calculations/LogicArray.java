@@ -76,4 +76,26 @@ public class LogicArray {
 		this.numCols++;
 		truth.add(newCol);
 	}
+	
+	public boolean checkTerm(String input) {
+		for (int i = 0; i < names.size(); i++) {
+			if (names.get(i).equals(input)) {
+				return true;
+			}
+		}
+		return false;
+	}
+	
+	public int getIndex(String input) {
+		for (int i = 0; i < names.size(); i++) {
+			if (names.get(i).equals(input)) {
+				return i;
+			}
+		}
+		return -1;
+	}
+	
+	public int getLen() {
+		return this.numRows;
+	}
 }
