@@ -29,7 +29,7 @@ public class Main {
 		String input = "(A*B+B)!*C + (AOB)";
 		System.out.println("Input: " + input);
 		EvalLogic eval = new EvalLogic(input);
-		eval.printInput();
+		//eval.printInput();
 		//System.out.println(EvalLogic.inputParse(input));
 		
 	}

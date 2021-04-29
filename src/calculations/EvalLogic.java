@@ -24,10 +24,10 @@ public class EvalLogic {
 		test.printResults();
 		
 		// Replace inputs with the column numbers
-		for (int j = 0; j < userInput.size(); j++) {
-			if (test.getIndex(userInput.get(j)) >= 0) {
+		for (int i = 0; i < userInput.size(); i++) {
+			if (test.getIndex(userInput.get(i)) >= 0) {
 				//if so, get the column number
-				userInput.set(j, Integer.toString(test.getIndex(userInput.get(j))));
+				userInput.set(i, Integer.toString(test.getIndex(userInput.get(i))));
 			}
 		}
 		
@@ -37,22 +37,34 @@ public class EvalLogic {
 		// Repeat until no more brackets
 		int[] set = new int[2];
 //		do {
-			//Look for inner brackets
+			// Look for inner brackets
 			set = innerBrackets();
-			System.out.println("First eval: " + set[0] + " " + set[1]);
+			System.out.println("First eval brackets at: " + set[0] + " " + set[1]);
 			
+			// Look for separators
+			ArrayList<Integer> terms;
+			terms = getSeparators(set);
+			System.out.println(getTermSplits(set, terms));
 			
+			// Make indices to separate terms (incl brackets)
+			terms = getTermSplits(set, terms);
+			
+			for (int i = 0; i < terms.size() - 1; i++) {
+				if (terms.get(i+1) - terms.get(i) > 1) {
+					//eval
+					
+				}				
+			}
+
+			//once all terms between separators are evaluated, 
+			// evaluate separators
+			
+			//return from inner loop (and remove brackets)
+
 //		} while(set[1] != 0);
-		
-		
-
-
 
 		//remove brackets when only one entry and not followed or preceded by a !
-		
-		
 
-		
 	}
 	
 	/**
@@ -136,8 +148,56 @@ public class EvalLogic {
 		return inner;
 	}
 	
+/**
+ * Compares the input to the separators (+ O)
+ * 
+ * @param input - the input string
+ * @return - boolean true if it matches a separator.
+ */
+	private boolean isSeparator(String input) {
+		String[] separators = {"+", "O"};
+		for (int i = 0; i < separators.length; i++) {
+			if (input.equals(separators[i])) {
+				return true;
+			}
+		}
+		return false;
+	}
 
-//	public static void startHere(String input) {
+	/**
+	 * Get the indices of the separators in the input string
+	 * 
+	 * @param - indices of the section of input you want to evaluate
+	 * @return - indices of separators
+	 */
+	private ArrayList<Integer> getSeparators(int[] indices){
+		ArrayList<Integer> separators = new ArrayList<Integer>();
+		int cnt = 0;
+		for (int i = indices[0]; i < indices[1]; i++ ) {
+			if (isSeparator(userInput.get(i))) {
+				separators.add(cnt,  i);
+				cnt++;
+			}
+		}
+		return separators;
+	}
+
+	/**
+	 * Splices brackets and separators together to get all terms separations
+	 * 
+	 * @param set - indices of the start and end bracket numbers. Checks for (0,)
+	 * @param separators - indices of 
+	 * @return
+	 */
+	private  ArrayList<Integer> getTermSplits(int[] set, ArrayList<Integer> separators) {
+		//ArrayList<Integer> termSplits = new ArrayList<Integer>();
+		if (set[1] != set[0]) {
+			separators.add(0, set[0]);
+			separators.add(set[1]);
+		}
+		return separators;
+	}
+	//	public static void startHere(String input) {
 //		
 //		
 //		
@@ -166,6 +226,7 @@ public class EvalLogic {
 //			// 2.a. How many terms in the brackets (is there a + or O?)
 //			ArrayList<String> terms = separateTerms(innerBrackets(input));
 //			System.out.println(terms);
+	
 
 	
 //			// Evaluate Terms //longer than 1
@@ -219,37 +280,29 @@ public class EvalLogic {
 
 	
 	
-	private static ArrayList<String> separateTerms(String input){
-		ArrayList<String> out = new ArrayList<String>();
-		String[] separators = {"+", "O"};
-		String sub = "";
-		int term = 0;
-		for (int i = 0; i < input.length(); i++) {
-			if (input.substring(i, i+1).equals(separators[0]) || 
-				input.substring(i, i+1).equals(separators[1])	) {
-				out.add(term, sub);
-				sub = "";
-				term++;
-				//Add operator as a term
-				out.add(term, input.substring(i, i+1));
-				term++;
-			} else {
-				sub += input.substring(i, i+1);
-			}
-		}
-		out.add(term, sub);
-		return out;
-	}
+//	private static ArrayList<String> separateTerms(String input){
+//		ArrayList<String> out = new ArrayList<String>();
+//		String[] separators = {"+", "O"};
+//		String sub = "";
+//		int term = 0;
+//		for (int i = 0; i < input.length(); i++) {
+//			if (input.substring(i, i+1).equals(separators[0]) || 
+//				input.substring(i, i+1).equals(separators[1])	) {
+//				out.add(term, sub);
+//				sub = "";
+//				term++;
+//				//Add operator as a term
+//				out.add(term, input.substring(i, i+1));
+//				term++;
+//			} else {
+//				sub += input.substring(i, i+1);
+//			}
+//		}
+//		out.add(term, sub);
+//		return out;
+//	}
 	
-	private static boolean isSeparator(String input) {
-		String[] separators = {"+", "O"};
-		for (int i = 0; i < separators.length; i++) {
-			if (input.equals(separators[i])) {
-				return true;
-			}
-		}
-		return false;
-	}
+
 	
 	private static ArrayList<Boolean> evalTerm(String term, int len){
 		ArrayList<Boolean> boolList = new ArrayList<Boolean>(len);
