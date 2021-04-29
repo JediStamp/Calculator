@@ -52,7 +52,7 @@ public class EvalLogic {
 			for (int i = 0; i < terms.size() - 1; i++) {
 				if (terms.get(i+1) - terms.get(i) > 1) {
 					//eval
-					
+					evalTerm(terms.get(i), terms.get(i+1));
 				}				
 			}
 
@@ -185,9 +185,9 @@ public class EvalLogic {
 	/**
 	 * Splices brackets and separators together to get all terms separations
 	 * 
-	 * @param set - indices of the start and end bracket numbers. Checks for (0,)
-	 * @param separators - indices of 
-	 * @return
+	 * @param set - indices of the start and end bracket numbers. Checks for (0,0) case as well.
+	 * @param separators - indices of the separators (+, O)
+	 * @return - an arrayList of integers corresponding to the indices of brackets and separators.
 	 */
 	private  ArrayList<Integer> getTermSplits(int[] set, ArrayList<Integer> separators) {
 		//ArrayList<Integer> termSplits = new ArrayList<Integer>();
@@ -197,6 +197,44 @@ public class EvalLogic {
 		}
 		return separators;
 	}
+	
+	private void evalTerm(int start, int end) {
+		//Get first operator
+		switch(userInput.get(start+2)) {
+			case "!":
+				System.out.println("!" + userInput.get(start+2));
+				break;
+			case "*":
+				System.out.println("*" + userInput.get(start+2));
+//				andFun(userInput.get(start)+1,userInput.get(start)+3 );
+				break;
+			case "+":
+				System.out.println("+" + userInput.get(start+2));
+				break;
+			case "O":
+				System.out.println("O" + userInput.get(start+2));
+				break;
+		}
+
+		
+//		if !, then take first and not it
+//		else take 1st and 3rd and perform the 2 operation on it
+//		then replace terms with new term
+
+		//cases
+		//A*B
+		//A!
+		//AOB
+		//A+B
+	}
+	
+	
+	//AND function
+	public boolean andFun( int in1, int in2 ) {
+		return false;
+	}
+
+	
 	//	public static void startHere(String input) {
 //		
 //		
@@ -304,19 +342,19 @@ public class EvalLogic {
 	
 
 	
-	private static ArrayList<Boolean> evalTerm(String term, int len){
-		ArrayList<Boolean> boolList = new ArrayList<Boolean>(len);
-		System.out.println("Eval Term returns all false atm");
-		//get letter column
-		// get operator (AND, NOT)
-		// evaluate NOT
-		//AND get next input...
-		
-		for( int j =0; j < len; j++) {
-			boolList.add(j,false);
-		}
-		return boolList;
-	}
+//	private static ArrayList<Boolean> evalTerm(String term, int len){
+//		ArrayList<Boolean> boolList = new ArrayList<Boolean>(len);
+//		System.out.println("Eval Term returns all false atm");
+//		//get letter column
+//		// get operator (AND, NOT)
+//		// evaluate NOT
+//		//AND get next input...
+//		
+//		for( int j =0; j < len; j++) {
+//			boolList.add(j,false);
+//		}
+//		return boolList;
+//	}
 	
 	/**
 	 * Prints the current status of the input string
@@ -347,15 +385,7 @@ public class EvalLogic {
 	
 	//NOT functions
 	
-	//AND functions
 
-	public static boolean andFun(boolean input1, boolean input2) {
-		return input1 && input2;
-	}
-	
-	public static boolean andFun(boolean input1, boolean input2, boolean input3) {
-		return input1 && input2 && input3;
-	}
 
 	//OR functions
 	
