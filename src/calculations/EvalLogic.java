@@ -7,17 +7,20 @@ import java.util.regex.Pattern;
 
 public class EvalLogic {
 	private ArrayList<String> userInput;
-	
+	private LogicArray test;
 		
 	public EvalLogic(String strIn) {
 		// Parse The input string into elements
 		inputParse(strIn);
+		//add brackets at start and end of input
+		userInput.add(0, "(");
+		userInput.add(userInput.size(), ")");
 
 		// Get unique inputs
 		ArrayList<String> uniqueInputs = getUniqueInputs();
 		
 		// create logic array with unique inputs
-		LogicArray test = new LogicArray(uniqueInputs);
+		test = new LogicArray(uniqueInputs);
 		
 		//Print out what we have so far
 		System.out.println(uniqueInputs);
@@ -36,32 +39,55 @@ public class EvalLogic {
 		
 		// Repeat until no more brackets
 		int[] set = new int[2];
-//		do {
+		ArrayList<Integer> terms;
+		do {
 			// Look for inner brackets
 			set = innerBrackets();
 			System.out.println("First eval brackets at: " + set[0] + " " + set[1]);
 			
 			// Look for separators
-			ArrayList<Integer> terms;
-			terms = getSeparators(set);
-			System.out.println(getTermSplits(set, terms));
+			//ArrayList<Integer> terms;
+			//terms = getSeparators(set);
+			System.out.println(getTermSplits(set, getSeparators(set)));
 			
 			// Make indices to separate terms (incl brackets)
-			terms = getTermSplits(set, terms);
+			terms = getTermSplits(set, getSeparators(set));
 			
-			for (int i = 0; i < terms.size() - 1; i++) {
-				if (terms.get(i+1) - terms.get(i) > 1) {
-					//eval
-					evalTerm(terms.get(i), terms.get(i+1));
-				}				
+			//evaluate terms greater than 1 col wide (eval right to left term wise)
+			for (int i = terms.size()-1; i > 0; i--) {
+				if (terms.get(i) - terms.get(i -1) > 2) {
+					evalTerm(terms.get(0)+1, terms.get(1));
+					test.printResults();
+				}
+				System.out.println(userInput);	
 			}
-
-			//once all terms between separators are evaluated, 
-			// evaluate separators
 			
-			//return from inner loop (and remove brackets)
+			//evaluate separators
+			set = innerBrackets();
+			terms = getTermSplits(set, getSeparators(set));
+						
+//			for (int i = terms.size()-1; i > 1; i--) {
+//				evalSep(terms.get(0), terms.get(2));
+//				test.printResults();
+//
+//				System.out.println(userInput);	
+//			}
+			for (int i = terms.size()-1; i > 1; i--) {
+				evalSep(terms.get(0) + 1, terms.get(2) - 1, terms.get(1));
+				test.printResults();
 
-//		} while(set[1] != 0);
+				System.out.println(userInput);	
+			}
+			
+			//remove brackets
+			set = innerBrackets();
+			if (set[1] - set[0] == 2) {
+				userInput.remove(set[1]);
+				userInput.remove(set[0]);
+			}
+			System.out.println(userInput);
+		}while(userInput.size()> 1);
+
 
 		//remove brackets when only one entry and not followed or preceded by a !
 
@@ -198,163 +224,106 @@ public class EvalLogic {
 		return separators;
 	}
 	
-	private void evalTerm(int start, int end) {
+	private void evalTerm(int start, int op) {
+		String name;
+		int colNum;
 		//Get first operator
-		switch(userInput.get(start+2)) {
-			case "!":
-				System.out.println("!" + userInput.get(start+2));
-				break;
-			case "*":
-				System.out.println("*" + userInput.get(start+2));
-//				andFun(userInput.get(start)+1,userInput.get(start)+3 );
-				break;
-			case "+":
-				System.out.println("+" + userInput.get(start+2));
-				break;
-			case "O":
-				System.out.println("O" + userInput.get(start+2));
-				break;
+		switch(userInput.get(op)) {
+		case "!":
+			System.out.println("!" + userInput.get(op));
+			name = makeName(start, op);
+			colNum = test.notFun( Integer.parseInt(userInput.get(start)), name);
+			updateInput(start, op, colNum);
+			break;
+		case "*":
+			name = makeName(start, start + 2);
+			colNum = test.andFun( Integer.parseInt(userInput.get(start)), 
+					Integer.parseInt(userInput.get(start+2)), 
+					name);
+			updateInput(start ,start + 2,colNum);
+			break;
 		}
-
-		
-//		if !, then take first and not it
-//		else take 1st and 3rd and perform the 2 operation on it
-//		then replace terms with new term
-
-		//cases
-		//A*B
-		//A!
-		//AOB
-		//A+B
+	}		
+	
+	/**
+	 * Evaluate the separators with the term before and after the separator. 
+	 * Calls the update input function and the appropriate function of Logic Array (+, O)
+	 * 
+	 * @param start - 
+	 * @param end
+	 */
+	private void evalSep(int start, int end, int sep) {
+		String name;
+		int colNum;
+		//Get first operator
+		switch(userInput.get(sep)) {
+		case "+":
+			name = makeName(start, end);
+			colNum = test.orFun( Integer.parseInt(userInput.get(start)), 
+					Integer.parseInt(userInput.get(end)), 
+					name);
+			updateInput(start ,end,colNum);
+			break;
+		case "O":
+			name = makeName(start , end);
+			colNum = test.xorFun( Integer.parseInt(userInput.get(start)), 
+					Integer.parseInt(userInput.get(end)), 
+					name);
+			updateInput(start -1 ,end +1,colNum);
+			break;
+		}
 	}
-	
-	
-	//AND function
-	public boolean andFun( int in1, int in2 ) {
-		return false;
-	}
 
-	
-	//	public static void startHere(String input) {
-//		
-//		
-//		
-////		// Find how many inputs there are
-////		int cnt = 0;
-////		String[] inputs = {"A", "B", "C"};
-////		for (int i = 0; i < inputs.length; i++) {
-////			if (input.indexOf(inputs[i])> -1) {
-////				cnt++;
-////			}
-////		}
-////		System.out.println("Number of inputs: " + cnt);
-//		
-//		//Create an Array for the correct number of inputs
-////		LogicArray test = new LogicArray(cnt);
-////		test.printResults();
-//		
-//		// Break the string into terms
-//		// 1. Check for brackets
-//		int brackets = countMatches(input,"[(]");
-//		System.out.println("number of brackets is: " + brackets);
-//		
-//		for (int i = 0; i < brackets; i++) {
-//			// 2. evaluate the part in the brackets
-//			System.out.println(innerBrackets(input));
-//			// 2.a. How many terms in the brackets (is there a + or O?)
-//			ArrayList<String> terms = separateTerms(innerBrackets(input));
-//			System.out.println(terms);
-	
-
-	
-//			// Evaluate Terms //longer than 1
-//			// for each term
-//			for (int j = 0; j < terms.size(); j++) {
-//				
-//				// is it already in the truth table?
-//				if (test.getIndex(terms.get(j)) >= 0) {
-//					//if so, get the column number
-//					terms.set(j, "col" + test.getIndex(terms.get(j)));
-//				}
-//				
-//				//if not
-//				else {
-//					//if it is not a separator, add it
-//					if (!isSeparator(terms.get(j))) {
-//						System.out.println("Add term to test and evaluate it");
-//						ArrayList<Boolean> boolList = evalTerm(terms.get(j),test.getLen());
-//						test.addTerm(terms.get(j),boolList);
-//						test.printResults();
-//					}
-//					//if it is a separator, skip it for now
-//				}
-//					
-//				
-//			//once all non separator terms are evaluated
-//			//combine with separator
-//			//evaluate	
-//			//move outside of brackets and repeat	
-//				
-//			}
-//			//evaluate rest
-//
-//		}
-//		
-//		//Once all brackets are complete 
-//		//Check for NOT
-//	}
-	
-	private static int countMatches(String input, String term) {
-		int terms = 0;
-		for (int i = 0; i < input.length(); i++) {
-			if (input.substring(i, i + term.length()-2).matches(term)) {
-				terms++;
+	/**
+	 * Makes the column name (before the input is removed from the userInput string).
+	 * 
+	 * @param start - starting index of userInput
+	 * @param end - end index of userInput
+	 * @return - name to be used as column header in truth table
+	 */
+	private String makeName(int start, int end) {
+		String name = "";
+		for (int i = start; i <= end; i++) {
+			switch(userInput.get(i)) {
+			case("*"):
+				name += "*";
+				break;
+			case("!"):
+				name += "!";
+				break;
+			case("+"):
+				name += "+";
+				break;
+			case("O"):
+				name += "O";
+				break;
+			case("("):
+				break;
+			case(")"):
+				break;
+			// this should be the column numbers only
+			default:
+				name += test.getName(Integer.parseInt(userInput.get(i)));
+				break;
 			}
 		}
-		return terms;
+		return name;
 	}
 	
-	
-
-	
-	
-//	private static ArrayList<String> separateTerms(String input){
-//		ArrayList<String> out = new ArrayList<String>();
-//		String[] separators = {"+", "O"};
-//		String sub = "";
-//		int term = 0;
-//		for (int i = 0; i < input.length(); i++) {
-//			if (input.substring(i, i+1).equals(separators[0]) || 
-//				input.substring(i, i+1).equals(separators[1])	) {
-//				out.add(term, sub);
-//				sub = "";
-//				term++;
-//				//Add operator as a term
-//				out.add(term, input.substring(i, i+1));
-//				term++;
-//			} else {
-//				sub += input.substring(i, i+1);
-//			}
-//		}
-//		out.add(term, sub);
-//		return out;
-//	}
-	
-
-	
-//	private static ArrayList<Boolean> evalTerm(String term, int len){
-//		ArrayList<Boolean> boolList = new ArrayList<Boolean>(len);
-//		System.out.println("Eval Term returns all false atm");
-//		//get letter column
-//		// get operator (AND, NOT)
-//		// evaluate NOT
-//		//AND get next input...
-//		
-//		for( int j =0; j < len; j++) {
-//			boolList.add(j,false);
-//		}
-//		return boolList;
-//	}
+	/**
+	 * Removes input between specified numbers and 
+	 * replaces with the column number where the answer is located.
+	 * 
+	 * @param start - starting index of userInput
+	 * @param end - end index of userInput
+	 * @param colNum - index of column that represents this operation
+	 */
+	private void updateInput(int start, int end, int colNum) {
+		userInput.set(start, Integer.toString(colNum));
+		for (int i = end; i > start; i--) {
+			userInput.remove(i);
+		}
+	}
 	
 	/**
 	 * Prints the current status of the input string
@@ -362,39 +331,4 @@ public class EvalLogic {
 	public void printInput() {
 		System.out.println(userInput);
 	}
-
-	//	private static boolean inputA, inputB, inputC;
-	
-	
-//	//Constructors 1-3 inputs
-//	
-//	public LogicFunctions(boolean inputA) {
-//		this.inputA = inputA;
-//	}
-//	
-//	public LogicFunctions(boolean inputA, boolean inputB) {
-//		this.inputA = inputA;
-//		this.inputB = inputB;
-//	}
-//	
-//	public LogicFunctions(boolean inputA, boolean inputB, boolean inputC) {
-//		this.inputA = inputA;
-//		this.inputB = inputB;
-//		this.inputC = inputC;
-//	}
-	
-	//NOT functions
-	
-
-
-	//OR functions
-	
-	//XOR functions
-	
-	// Input Parser
-	// * AND
-	// + OR
-	// ! NOT
-	// O XOR
-	
 }

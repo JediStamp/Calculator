@@ -1,4 +1,8 @@
-package calculations;
+package userInput;
+
+import calculations.Calc;
+import calculations.EvalLogic;
+import calculations.NumConverter;
 
 public class Main {
 	public static void main(String[] args) {
@@ -6,7 +10,10 @@ public class Main {
 //		baseConv();
 //		LogicArray test = new LogicArray(4);
 //		test.printResults();
-		logicFun();
+//		logicFun();
+		
+		//Calc calc = new Calc();
+		trigInput.mainMenu();
 	}
 	
 	

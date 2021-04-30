@@ -81,7 +81,7 @@ public class LogicArray {
 	 * @param term - the name, shows the operation performed
 	 * @param newCol - an ArrayList of the results of the operation described in the name
 	 */
-	public void addTerm(String term, ArrayList<Boolean> newCol) {
+	public void addTerm(String term, List<Boolean> newCol) {
 		names.add(term);
 		this.numCols++;
 		truth.add(newCol);
@@ -124,5 +124,87 @@ public class LogicArray {
 	 */
 	public int getLen() {
 		return this.numRows;
+	}
+	
+	/**
+	 * AND function for two boolean lists
+	 * 
+	 * @param in1 - column 1
+	 * @param in2 - column 2
+	 * @param name - header to give output column
+	 * @return - index of new column
+	 */
+	public int andFun(int in1, int in2, String name) {
+		List<Boolean> test = new ArrayList<Boolean>(numRows);
+		for (int i = 0; i < numRows; i++) {
+			boolean val = truth.get(in1).get(i) && truth.get(in2).get(i);
+			test.add(i, val);
+		}
+		addTerm(name, test);
+		return truth.size() - 1;
+	}
+	
+	/**
+	 * XOR function for two boolean lists
+	 * 
+	 * @param in1 - column 1
+	 * @param in2 - column 2
+	 * @param name - header to give output column
+	 * @return - index of new column
+	 */
+	public int notFun(int in1, String name) {
+		List<Boolean> test = new ArrayList<Boolean>(numRows);
+		for (int i = 0; i < numRows; i++) {
+			boolean val = !(truth.get(in1).get(i));
+			test.add(i, val);
+		}
+		addTerm(name, test);
+		return truth.size() - 1;
+	}
+	
+	/**
+	 * OR function for two boolean lists
+	 * 
+	 * @param in1 - column 1
+	 * @param in2 - column 2
+	 * @param name - header to give output column
+	 * @return - index of new column
+	 */
+	public int orFun(int in1, int in2, String name) {
+		List<Boolean> test = new ArrayList<Boolean>(numRows);
+		for (int i = 0; i < numRows; i++) {
+			boolean val = truth.get(in1).get(i) || truth.get(in2).get(i);
+			test.add(i, val);
+		}
+		addTerm(name, test);
+		return truth.size() - 1;
+	}
+	
+	/**
+	 * XOR function for two boolean lists
+	 * 
+	 * @param in1 - column 1
+	 * @param in2 - column 2
+	 * @param name - header to give output column
+	 * @return - index of new column
+	 */
+	public int xorFun(int in1, int in2, String name) {
+		List<Boolean> test = new ArrayList<Boolean>(numRows);
+		for (int i = 0; i < numRows; i++) {
+			boolean val = truth.get(in1).get(i) ^ truth.get(in2).get(i);
+			test.add(i, val);
+		}
+		addTerm(name, test);
+		return truth.size() - 1;
+	}
+	
+	/**
+	 * Return the column Name
+	 * 
+	 * @param index - index to fetch the column name
+	 * @return - name (String)
+	 */
+	public String getName(int index) {
+		return names.get(index);
 	}
 }
