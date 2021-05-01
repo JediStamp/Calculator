@@ -1,8 +1,8 @@
 package userInput;
 
-import calculations.Calc;
-import calculations.EvalLogic;
-import calculations.NumConverter;
+import calculations.TriangleMath;
+import calculations.*;
+
 
 public class Main {
 	public static void main(String[] args) {
@@ -10,10 +10,15 @@ public class Main {
 //		baseConv();
 //		LogicArray test = new LogicArray(4);
 //		test.printResults();
-//		logicFun();
+		logicFun();
 		
 		//Calc calc = new Calc();
-		trigInput.mainMenu();
+//		trigInput.mainMenu();
+		//-1 is missing value
+		
+//		double[] tri = {3,4,-1,-1,-1,90};
+//		TriangleMath myTriangle = new TriangleMath(tri);
+//		myTriangle.printTriangle();
 	}
 	
 	
@@ -33,7 +38,7 @@ public class Main {
 	}
 	
 	public static void logicFun() {
-		String input = "(A*B+B)!*C + (AOB)";
+		String input = "(A*B+B)*!*C + (AOB)";
 		System.out.println("Input: " + input);
 		EvalLogic eval = new EvalLogic(input);
 		//eval.printInput();

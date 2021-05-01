@@ -55,13 +55,15 @@ public class LogicArray {
 	 * Prints out the matrix with headers
 	 */
 	public void printResults() {
+
+		System.out.println();
 		//Print Headers
 		for (String i:names) {
 			System.out.printf("\t%s",i);
 		}
 		
 		System.out.println();
-		System.out.println("-----------------------------");
+		System.out.println();
 
 		// one row at a time
 		for (int row = 0; row < truth.get(0).size(); row++) {

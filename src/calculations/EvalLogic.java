@@ -1,20 +1,19 @@
 package calculations;
 
 import java.util.ArrayList;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
 
 public class EvalLogic {
 	private ArrayList<String> userInput;
 	private LogicArray test;
 		
 	public EvalLogic(String strIn) {
-		// Parse The input string into elements
-		inputParse(strIn);
-		//add brackets at start and end of input
-		userInput.add(0, "(");
-		userInput.add(userInput.size(), ")");
+		
+		fixInput(strIn);
+//		// Parse The input string into elements
+//		inputParse(strIn);
+//		//add brackets at start and end of input
+//		userInput.add(0, "(");
+//		userInput.add(userInput.size(), ")");
 
 		// Get unique inputs
 		ArrayList<String> uniqueInputs = getUniqueInputs();
@@ -23,7 +22,8 @@ public class EvalLogic {
 		test = new LogicArray(uniqueInputs);
 		
 		//Print out what we have so far
-		System.out.println(uniqueInputs);
+		System.out.println("Unique inputs are: " + uniqueInputs);
+		System.out.println("Starting Truth table is:");
 		test.printResults();
 		
 		// Replace inputs with the column numbers
@@ -34,8 +34,8 @@ public class EvalLogic {
 			}
 		}
 		
-		// Print out what we have now
-		System.out.println(userInput);
+		// Print out what we have now		
+		System.out.println("Input string with column numbers:" + userInput);
 		
 		// Repeat until no more brackets
 		int[] set = new int[2];
@@ -43,40 +43,26 @@ public class EvalLogic {
 		do {
 			// Look for inner brackets
 			set = innerBrackets();
-			System.out.println("First eval brackets at: " + set[0] + " " + set[1]);
 			
-			// Look for separators
-			//ArrayList<Integer> terms;
-			//terms = getSeparators(set);
-			System.out.println(getTermSplits(set, getSeparators(set)));
-			
-			// Make indices to separate terms (incl brackets)
+			// Make indices to separate terms (including brackets)
 			terms = getTermSplits(set, getSeparators(set));
 			
-			//evaluate terms greater than 1 col wide (eval right to left term wise)
+			//evaluate terms greater than 1 wide (evaluate right to left term wise)
 			for (int i = terms.size()-1; i > 0; i--) {
-				if (terms.get(i) - terms.get(i -1) > 2) {
-					evalTerm(terms.get(0)+1, terms.get(1));
+				while (terms.get(i) - terms.get(i -1) > 2) {
+					evalTerm(terms.get(i-1)+1);
 					test.printResults();
+					System.out.println("Evaluation string: " + userInput);
+					terms = getTermSplits(innerBrackets(), getSeparators(innerBrackets()));
 				}
-				System.out.println(userInput);	
 			}
 			
-			//evaluate separators
-			set = innerBrackets();
-			terms = getTermSplits(set, getSeparators(set));
+//			terms = getTermSplits(innerBrackets(), getSeparators(innerBrackets()));
 						
-//			for (int i = terms.size()-1; i > 1; i--) {
-//				evalSep(terms.get(0), terms.get(2));
-//				test.printResults();
-//
-//				System.out.println(userInput);	
-//			}
 			for (int i = terms.size()-1; i > 1; i--) {
 				evalSep(terms.get(0) + 1, terms.get(2) - 1, terms.get(1));
 				test.printResults();
-
-				System.out.println(userInput);	
+				System.out.println("Evaluation string: " + userInput);
 			}
 			
 			//remove brackets
@@ -85,19 +71,37 @@ public class EvalLogic {
 				userInput.remove(set[1]);
 				userInput.remove(set[0]);
 			}
-			System.out.println(userInput);
+			System.out.println("Evaluation string: " + userInput);
 		}while(userInput.size()> 1);
-
-
-		//remove brackets when only one entry and not followed or preceded by a !
-
+	}
+	
+	private void fixInput(String strIn) {
+		// Parse The input string into elements
+		inputParse(strIn);
+		
+		//add brackets at start and end of input
+		userInput.add(0, "(");
+		userInput.add(userInput.size(), ")");
+		
+		//check if there is a * before !, remove if there is
+		boolean flag = false;
+		for (int i = userInput.size() -1; i >= 0; i-- ) {
+			if (userInput.get(i).matches("!")) {
+				flag = true;
+			}else {
+				if (userInput.get(i).matches("[//*]") && flag) {
+					userInput.remove(i);
+				}
+				flag = false;
+			}
+		}
 	}
 	
 	/**
 	 * Creates an arrayList of the input values excluding spaces
 	 * @param strIn - the user provided string for evaluation
 	 */
-	private void inputParse(String strIn){
+ 	private void inputParse(String strIn){
 		userInput = new ArrayList<String>();
 		int cnt = 0;
 		for (int i = 0; i < strIn.length(); i++) {
@@ -224,16 +228,22 @@ public class EvalLogic {
 		return separators;
 	}
 	
-	private void evalTerm(int start, int op) {
+	/**
+	 * Evaluates a term ((*, !)
+	 * 
+	 * @param start - index of the first term in the evaluation sequence
+	 */
+	private void evalTerm(int start) {
 		String name;
 		int colNum;
 		//Get first operator
-		switch(userInput.get(op)) {
+		switch(userInput.get(start + 1)) {
 		case "!":
-			System.out.println("!" + userInput.get(op));
-			name = makeName(start, op);
+			System.out.println("!" + userInput.get(start + 1));
+			name = makeName(start, start + 1);
 			colNum = test.notFun( Integer.parseInt(userInput.get(start)), name);
-			updateInput(start, op, colNum);
+			updateInput(start, start + 1, colNum);
+			System.out.println(name);
 			break;
 		case "*":
 			name = makeName(start, start + 2);
@@ -241,6 +251,7 @@ public class EvalLogic {
 					Integer.parseInt(userInput.get(start+2)), 
 					name);
 			updateInput(start ,start + 2,colNum);
+			System.out.println(name);
 			break;
 		}
 	}		
@@ -249,8 +260,9 @@ public class EvalLogic {
 	 * Evaluate the separators with the term before and after the separator. 
 	 * Calls the update input function and the appropriate function of Logic Array (+, O)
 	 * 
-	 * @param start - 
-	 * @param end
+	 * @param start - first term of the evaluation
+	 * @param end - last term of the evaluation
+	 * @param sep - term where the separator is loacted
 	 */
 	private void evalSep(int start, int end, int sep) {
 		String name;
