@@ -6,6 +6,7 @@ import calculations.*;
 
 public class Main {
 	public static void main(String[] args) {
+		CalculatorGUI calc = new CalculatorGUI();
 //		Hyp();
 //		baseConv();
 //		LogicArray test = new LogicArray(4);

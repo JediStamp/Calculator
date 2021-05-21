@@ -1,3 +1,5 @@
+package calculations;
+
 public class FindLCD {
 
     /**

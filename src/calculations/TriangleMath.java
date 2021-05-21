@@ -2,8 +2,63 @@ package calculations;
 
 import java.util.Scanner;
 
+//ASSUME 90 DEGREE TRIANGLES
 public class TriangleMath {
-	private static double sideA, sideB, sideC, angA, angB, angC;
+	//sideA, sideB, sideC, angA, angB, angC;
+	private double[] values;
+	
+	public TriangleMath(double[] inputs) {
+		//-1 for missing values
+		this.values = inputs;
+
+		//	Do we have enough inputs
+		if (sufficientInputs()) {
+			//do calcs
+			
+		}else {
+			//quit
+		}
+	}
+	
+	/**
+	 * 
+	 * @return
+	 */
+	private boolean sufficientInputs() {
+		int sides = 0;
+		int angles = 0;
+		//math goes here
+		
+		if (angles + sides >= 3 && sides >= 1) {
+			return true;
+		}else {
+			return false;			
+		}
+	}
+	
+	/**
+	 * 
+	 */
+	public void printTriangle() {
+		String msg;
+		for (int i = 0; i < 6; i++) {
+			if (i < 3) {
+				msg = "Side is : " + values[i];	
+			}else {
+				msg = "Angle is : " + values[i];
+			}
+			
+			System.out.println(msg);
+		}
+	}
+	
+	//Calculate third angle if possible
+	//180-
+	
+	//Calculate third side if possible
+	//pythagorean
+	
+	
 	
 	private String check() {
 		//check if there is enough info to solve the equation
